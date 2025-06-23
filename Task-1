@@ -1,0 +1,53 @@
+-- Create the schema
+CREATE DATABASE LibraryDB;
+USE LibraryDB;
+
+-- Author Table
+CREATE TABLE Author (
+    AuthorID INT PRIMARY KEY AUTO_INCREMENT,
+    Name VARCHAR(100),
+    Bio TEXT
+);
+
+-- Category Table
+CREATE TABLE Category (
+    CategoryID INT PRIMARY KEY AUTO_INCREMENT,
+    Name VARCHAR(100)
+);
+
+-- Book Table
+CREATE TABLE Book (
+    BookID INT PRIMARY KEY AUTO_INCREMENT,
+    Title VARCHAR(200),
+    ISBN VARCHAR(20) UNIQUE,
+    CategoryID INT,
+    FOREIGN KEY (CategoryID) REFERENCES Category(CategoryID)
+);
+
+-- BookAuthor Table (Many-to-Many between Book and Author)
+CREATE TABLE BookAuthor (
+    BookID INT,
+    AuthorID INT,
+    PRIMARY KEY (BookID, AuthorID),
+    FOREIGN KEY (BookID) REFERENCES Book(BookID),
+    FOREIGN KEY (AuthorID) REFERENCES Author(AuthorID)
+);
+
+-- Member Table
+CREATE TABLE Member (
+    MemberID INT PRIMARY KEY AUTO_INCREMENT,
+    Name VARCHAR(100),
+    Email VARCHAR(100) UNIQUE,
+    JoinDate DATE
+);
+
+-- Loan Table
+CREATE TABLE Loan (
+    LoanID INT PRIMARY KEY AUTO_INCREMENT,
+    BookID INT,
+    MemberID INT,
+    LoanDate DATE,
+    ReturnDate DATE,
+    FOREIGN KEY (BookID) REFERENCES Book(BookID),
+    FOREIGN KEY (MemberID) REFERENCES Member(MemberID)
+);
