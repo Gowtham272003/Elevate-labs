@@ -1,0 +1,47 @@
+Table Creation
+CREATE TABLE Authors (
+    AuthorID INTEGER PRIMARY KEY,
+    Name TEXT NOT NULL,
+    Country TEXT
+);
+
+CREATE TABLE Books (
+    BookID INTEGER PRIMARY KEY,
+    Title TEXT NOT NULL,
+    AuthorID INTEGER,
+    Genre TEXT,
+    YearPublished INTEGER,
+    Price REAL,
+    FOREIGN KEY (AuthorID) REFERENCES Authors(AuthorID)
+);
+
+CREATE TABLE Borrowers (
+    BorrowerID INTEGER PRIMARY KEY,
+    Name TEXT NOT NULL,
+    Email TEXT,
+    Phone TEXT
+);
+
+INSERT Command
+INSERT INTO Authors (AuthorID, Name, Country) VALUES
+(1, 'George Orwell', 'UK'),
+(2, 'J.K. Rowling', 'UK'),
+(3, 'Unknown Author', NULL); -- Country is missing
+
+INSERT INTO Books (BookID, Title, AuthorID, Genre, YearPublished, Price) VALUES
+(101, '1984', 1, 'Dystopian', 1949, 9.99),
+(102, 'Harry Potter', 2, 'Fantasy', 1997, 19.99),
+(103, 'Mystery Book', 3, NULL, NULL, NULL); -- Genre, year, price are NULL
+
+INSERT INTO Borrowers (BorrowerID, Name, Email, Phone) VALUES
+(201, 'Alice', 'alice@example.com', '1234567890'),
+(202, 'Bob', NULL, '0987654321'); -- Email is missing
+
+UPDATE Command
+UPDATE Books SET Price = 14.99 WHERE BookID = 103 AND Price IS NULL;
+UPDATE Books SET Genre = 'Mystery' WHERE BookID = 103;
+UPDATE Borrowers SET Email = 'bob@example.com' WHERE BorrowerID = 202 AND Email IS NULL;
+
+DELETE Command
+DELETE FROM Authors WHERE Name = 'Unknown Author';
+DELETE FROM Books WHERE YearPublished < 1950;
