@@ -1,0 +1,41 @@
+-- 1. Create a sample table
+CREATE TABLE Students (
+    StudentID INTEGER PRIMARY KEY,
+    Name TEXT,
+    Age INTEGER,
+    Grade TEXT,
+    Marks INTEGER
+);
+
+-- 2. Insert sample data
+INSERT INTO Students (StudentID, Name, Age, Grade, Marks) VALUES
+(1, 'Alice', 20, 'A', 88),
+(2, 'Bob', 19, 'B', 72),
+(3, 'Charlie', 21, 'A', 91),
+(4, 'David', 22, 'C', 65),
+(5, 'Eva', 20, 'B', 78),
+(6, 'Frank', 23, 'A', 95);
+
+-- 3. Select all records
+SELECT * FROM Students;
+
+-- 4. Select specific columns
+SELECT Name, Marks FROM Students;
+
+-- 5. Apply WHERE condition
+SELECT * FROM Students WHERE Grade = 'A';
+
+-- 6. Using AND and OR
+SELECT * FROM Students WHERE Grade = 'A' AND Age > 20;
+
+-- 7. Using LIKE
+SELECT * FROM Students WHERE Name LIKE 'A%';  -- Names starting with 'A'
+
+-- 8. Using BETWEEN
+SELECT * FROM Students WHERE Marks BETWEEN 70 AND 90;
+
+-- 9. Sort results
+SELECT * FROM Students ORDER BY Marks DESC;
+
+-- 10. Limit number of results
+SELECT * FROM Students ORDER BY Marks DESC LIMIT 3;
