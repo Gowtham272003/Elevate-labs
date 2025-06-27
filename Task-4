@@ -1,0 +1,97 @@
+SQL> CREATE TABLE sales (
+  2      sale_id       NUMBER PRIMARY KEY,
+  3      customer_id   NUMBER,
+  4      product       VARCHAR2(50),
+  5      quantity      NUMBER,
+  6      price         NUMBER(10, 2),
+  7      sale_date     DATE
+  8  );
+
+Table created.
+
+SQL> 
+SQL> INSERT INTO sales VALUES (1, 101, 'Laptop', 2, 1200.00, TO_DATE('2025-01-12', 'YYYY-MM-
+
+1 row created.
+
+SQL> INSERT INTO sales VALUES (2, 102, 'Headphones', 5, 100.00, TO_DATE('2025-01-15', 'YYYY-
+;
+
+1 row created.
+
+SQL> INSERT INTO sales VALUES (3, 101, 'Laptop', 1, 1200.00, TO_DATE('2025-02-20', 'YYYY-MM-
+
+1 row created.
+
+SQL> INSERT INTO sales VALUES (4, 103, 'Keyboard', 3, 75.00, TO_DATE('2025-02-22', 'YYYY-MM-
+
+1 row created.
+
+SQL> select * from sales;
+
+   SALE_ID CUSTOMER_ID PRODUCT
+---------- ----------- --------------------------------------------------
+  QUANTITY      PRICE SALE_DATE
+---------- ---------- ---------
+         1         101 Laptop
+         2       1200 12-JAN-25
+
+         2         102 Headphones
+         5        100 15-JAN-25
+
+         3         101 Laptop
+         1       1200 20-FEB-25
+
+
+   SALE_ID CUSTOMER_ID PRODUCT
+---------- ----------- --------------------------------------------------
+  QUANTITY      PRICE SALE_DATE
+---------- ---------- ---------
+         4         103 Keyboard
+         3         75 22-FEB-25
+
+
+SQL> SELECT SUM(price * quantity) AS total_sales FROM sales;
+
+TOTAL_SALES
+-----------
+       4325
+
+SQL> SELECT product, COUNT(*) AS number_of_sales
+  2  FROM sales
+  3  GROUP BY product;
+
+PRODUCT                                            NUMBER_OF_SALES
+-------------------------------------------------- ---------------
+Laptop                                                           2
+Headphones                                                       1
+Keyboard                                                         1
+
+SQL> SELECT quantity,count(*) AS no_sales FROM sales GROUP BY quantity;
+
+  QUANTITY   NO_SALES
+---------- ----------
+         1          1
+         2          1
+         5          1
+         3          1
+
+SQL> SELECT customer_id, SUM(price * quantity) AS total_spent
+  2  FROM sales
+  3  GROUP BY customer_id
+  4  HAVING SUM(price * quantity) > 1000;
+
+CUSTOMER_ID TOTAL_SPENT
+----------- -----------
+        101        3600
+
+SQL> SELECT customer_id, SUM(price * quantity) AS total_spent
+  2  FROM sales
+  3  GROUP BY customer_id;
+
+CUSTOMER_ID TOTAL_SPENT
+----------- -----------
+        102         500
+        101        3600
+        103         225
+
