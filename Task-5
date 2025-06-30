@@ -1,0 +1,179 @@
+ select * from emp;
+
+ EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM
+------ ---------- --------- ---------- --------- ---------- ----------
+DEPTNO
+------
+  7369 SMITH      CLERK           7902 17-DEC-80        800
+    20
+
+  7499 ALLEN      SALESMAN        7698 20-FEB-81       1600        300
+    30
+
+  7521 WARD       SALESMAN        7698 22-FEB-81       1250        500
+    30
+
+
+ EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM
+------ ---------- --------- ---------- --------- ---------- ----------
+DEPTNO
+------
+  7566 JONES      MANAGER         7839 02-APR-81       2975
+    20
+
+  7654 MARTIN     SALESMAN        7698 28-SEP-81       1250       1400
+    30
+
+  7698 BLAKE      MANAGER         7839 01-MAY-81       2850
+    30
+
+
+ EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM
+------ ---------- --------- ---------- --------- ---------- ----------
+DEPTNO
+------
+  7782 CLARK      MANAGER         7839 09-JUN-81       2450
+    10
+
+  7788 SCOTT      ANALYST         7566 19-APR-87       3000
+    20
+
+  7839 KING       PRESIDENT            17-NOV-81       5000
+    10
+
+
+ EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM
+------ ---------- --------- ---------- --------- ---------- ----------
+DEPTNO
+------
+  7844 TURNER     SALESMAN        7698 08-SEP-81       1500          0
+    30
+
+  7876 ADAMS      CLERK           7788 23-MAY-87       1100
+    20
+
+  7900 JAMES      CLERK           7698 03-DEC-81        950
+    30
+
+
+ EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM
+------ ---------- --------- ---------- --------- ---------- ----------
+DEPTNO
+------
+  7902 FORD       ANALYST         7566 03-DEC-81       3000
+    20
+
+  7934 MILLER     CLERK           7782 23-JAN-82       1300
+    10
+
+
+ows selected.
+
+ select * from dept;
+
+DEPTNO DNAME          LOC
+------ -------------- -------------
+    10 ACCOUNTING     NEW YORK
+    20 RESEARCH       DALLAS
+    30 SALES          CHICAGO
+    40 OPERATIONS     BOSTON
+
+ select emp.ename,emp.job,dept.dname from emp inner join dept on emp.deptno=dept.deptno;
+
+E      JOB       DNAME
+------ --------- --------------
+H      CLERK     RESEARCH
+N      SALESMAN  SALES
+       SALESMAN  SALES
+S      MANAGER   RESEARCH
+IN     SALESMAN  SALES
+E      MANAGER   SALES
+K      MANAGER   ACCOUNTING
+T      ANALYST   RESEARCH
+       PRESIDENT ACCOUNTING
+ER     SALESMAN  SALES
+S      CLERK     RESEARCH
+
+E      JOB       DNAME
+------ --------- --------------
+S      CLERK     SALES
+       ANALYST   RESEARCH
+ER     CLERK     ACCOUNTING
+
+ows selected.
+
+ select emp.sal,dept.loc from emp left outer join dept on emp.deptno=dept.deptno;
+
+   SAL LOC
+------ -------------
+   800 DALLAS
+  1600 CHICAGO
+  1250 CHICAGO
+  2975 DALLAS
+  1250 CHICAGO
+  2850 CHICAGO
+  2450 NEW YORK
+  3000 DALLAS
+  5000 NEW YORK
+  1500 CHICAGO
+  1100 DALLAS
+
+   SAL LOC
+------ -------------
+   950 CHICAGO
+  3000 DALLAS
+  1300 NEW YORK
+
+ows selected.
+
+ select emp.sal,dept.dname,emp.job from emp right outer join dept on emp.deptno=dept.deptno;
+
+   SAL DNAME          JOB
+------ -------------- ---------
+  2450 ACCOUNTING     MANAGER
+  5000 ACCOUNTING     PRESIDENT
+  1300 ACCOUNTING     CLERK
+  2975 RESEARCH       MANAGER
+  3000 RESEARCH       ANALYST
+  1100 RESEARCH       CLERK
+   800 RESEARCH       CLERK
+  3000 RESEARCH       ANALYST
+  1250 SALES          SALESMAN
+  1500 SALES          SALESMAN
+  1600 SALES          SALESMAN
+
+   SAL DNAME          JOB
+------ -------------- ---------
+   950 SALES          CLERK
+  2850 SALES          MANAGER
+  1250 SALES          SALESMAN
+       OPERATIONS
+
+ows selected.
+
+ select emp.sal,dept.dname from emp full join dept on emp.deptno=dept.deptno;
+
+   SAL DNAME
+------ --------------
+   800 RESEARCH
+  1600 SALES
+  1250 SALES
+  2975 RESEARCH
+  1250 SALES
+  2850 SALES
+  2450 ACCOUNTING
+  3000 RESEARCH
+  5000 ACCOUNTING
+  1500 SALES
+  1100 RESEARCH
+
+   SAL DNAME
+------ --------------
+   950 SALES
+  3000 RESEARCH
+  1300 ACCOUNTING
+       OPERATIONS
+
+ows selected.
+
+ 
