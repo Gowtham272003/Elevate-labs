@@ -1,0 +1,26 @@
+-- Subquery in SELECT (Scalar Subquery)
+SELECT ename, sal, (SELECT AVG(sal) FROM emp) AS avg_salary FROM emp;
+
+-- Subquery in WHERE using IN
+SELECT ename, job FROM emp WHERE deptno IN (SELECT deptno FROM dept WHERE loc = 'DALLAS');
+
+-- Subquery in WHERE using EXISTS
+SELECT ename, job FROM emp e WHERE EXISTS (SELECT 1 FROM dept d WHERE e.deptno = d.deptno AND d.loc = 'CHICAGO');
+
+-- Subquery in WHERE using =
+SELECT ename, sal FROM emp WHERE sal = (SELECT MAX(sal) FROM emp);
+
+-- Correlated Subquery in WHERE
+SELECT ename, sal FROM emp e1 WHERE sal > (SELECT AVG(sal) FROM emp e2 WHERE e1.deptno = e2.deptno);
+
+-- Subquery in FROM (Inline View)
+SELECT deptno, avg_sal FROM (SELECT deptno, AVG(sal) AS avg_sal FROM emp GROUP BY deptno) WHERE avg_sal > 2000;
+
+-- Subquery with NOT IN
+SELECT ename FROM emp WHERE deptno NOT IN (SELECT deptno FROM dept WHERE loc = 'NEW YORK');
+
+-- Correlated Subquery in SELECT
+SELECT ename, sal, (SELECT COUNT(*) FROM emp e2 WHERE e2.sal > e1.sal) AS higher_paid_than FROM emp e1;
+
+-- Subquery with ORDER BY in inline view
+SELECT * FROM (SELECT ename, sal FROM emp ORDER BY sal DESC) WHERE ROWNUM <= 5;
