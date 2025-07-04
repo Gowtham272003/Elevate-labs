@@ -1,0 +1,41 @@
+CREATE TABLE employee (
+    emp_id NUMBER PRIMARY KEY,
+    emp_name VARCHAR2(50),
+    salary NUMBER
+);
+
+INSERT INTO employee VALUES (1, 'John', 50000);
+INSERT INTO employee VALUES (2, 'Alice', 60000);
+INSERT INTO employee VALUES (3, 'Bob', 55000);
+COMMIT;
+CREATE OR REPLACE PROCEDURE give_bonus (
+    p_emp_id IN employee.emp_id%TYPE,
+    p_bonus IN NUMBER
+)
+IS
+BEGIN
+    UPDATE employee
+    SET salary = salary + p_bonus
+    WHERE emp_id = p_emp_id
+    AND salary < 60000;
+
+    DBMS_OUTPUT.PUT_LINE('Bonus applied if condition met.');
+END;
+/
+SET SERVEROUTPUT ON;
+EXEC give_bonus(1, 5000);
+EXEC give_bonus(2, 5000);
+CREATE OR REPLACE FUNCTION get_annual_salary (
+    p_emp_id IN employee.emp_id%TYPE
+) RETURN NUMBER
+IS
+    v_salary NUMBER;
+BEGIN
+    SELECT salary * 12 INTO v_salary
+    FROM employee
+    WHERE emp_id = p_emp_id;
+
+    RETURN v_salary;
+END;
+/
+SELECT get_annual_salary(1) AS annual_salary FROM dual;
