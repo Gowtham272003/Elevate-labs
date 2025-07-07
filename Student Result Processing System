@@ -1,0 +1,310 @@
+SQL> CREATE TABLE Students (
+  2      student_id NUMBER PRIMARY KEY,
+  3      student_name VARCHAR2(100),
+  4      department VARCHAR2(50)
+  5  );
+CREATE TABLE Students (
+             *
+ERROR at line 1:
+ORA-00955: name is already used by an existing object
+
+
+SQL> CREATE TABLE Learners (
+  2      learner_id NUMBER PRIMARY KEY,
+  3      learner_name VARCHAR2(100),
+  4      department VARCHAR2(50)
+  5  );
+
+Table created.
+
+SQL> CREATE TABLE Courses (
+  2      course_id NUMBER PRIMARY KEY,
+  3      course_name VARCHAR2(100),
+  4      credits NUMBER
+  5  );
+
+Table created.
+
+SQL> CREATE TABLE Semesters (
+  2      semester_id NUMBER PRIMARY KEY,
+  3      semester_name VARCHAR2(20)
+  4  );
+
+Table created.
+
+SQL> CREATE TABLE Grades (
+  2      grade_id NUMBER PRIMARY KEY,
+  3      learner_id NUMBER,
+  4      course_id NUMBER,
+  5      semester_id NUMBER,
+  6      marks NUMBER CHECK (marks BETWEEN 0 AND 100),
+  7      grade CHAR(2),
+  8      CONSTRAINT fk_learner FOREIGN KEY (learner_id) REFERENCES Learners(learner_id),
+  9      CONSTRAINT fk_course FOREIGN KEY (course_id) REFERENCES Courses(course_id),
+ 10      CONSTRAINT fk_semester FOREIGN KEY (semester_id) REFERENCES Semesters(semester_id)
+ 11  );
+
+Table created.
+
+SQL> -- Learners
+SQL> INSERT INTO Learners VALUES (1, 'Alice', 'CSE');
+
+1 row created.
+
+SQL> INSERT INTO Learners VALUES (2, 'Bob', 'ECE');
+
+1 row created.
+
+SQL> -- Courses
+SQL> INSERT INTO Courses VALUES (101, 'DBMS', 4);
+
+1 row created.
+
+SQL> INSERT INTO Courses VALUES (102, 'Operating Systems', 3);
+
+1 row created.
+
+SQL> INSERT INTO Courses VALUES (103, 'Mathematics', 4);
+
+1 row created.
+
+SQL> -- Semesters
+SQL> INSERT INTO Semesters VALUES (1, 'Sem1');
+
+1 row created.
+
+SQL> INSERT INTO Semesters VALUES (2, 'Sem2');
+
+1 row created.
+
+SQL> -- Grades
+SQL> INSERT INTO Grades VALUES (1, 1, 101, 1, 85, 'A');
+
+1 row created.
+
+SQL> INSERT INTO Grades VALUES (2, 1, 102, 1, 78, 'B');
+
+1 row created.
+
+SQL> INSERT INTO Grades VALUES (3, 1, 103, 1, 90, 'A');
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO Grades VALUES (4, 2, 101, 1, 65, 'C');
+
+1 row created.
+
+SQL> INSERT INTO Grades VALUES (5, 2, 102, 1, 50, 'D');
+
+1 row created.
+
+SQL> INSERT INTO Grades VALUES (6, 2, 103, 1, 30, 'F');
+
+1 row created.
+
+SQL> SELECT 
+  2      g.learner_id,
+  3      l.learner_name,
+  4      g.semester_id,
+  5      ROUND(SUM(
+  6          CASE g.grade 
+  7              WHEN 'A' THEN 10
+  8              WHEN 'B' THEN 8
+  9              WHEN 'C' THEN 6
+ 10              WHEN 'D' THEN 4
+ 11              ELSE 0
+ 12          END * c.credits
+ 13      ) / SUM(c.credits), 2) AS GPA
+ 14  FROM Grades g
+ 15  JOIN Learners l ON g.learner_id = l.learner_id
+ 16  JOIN Courses c ON g.course_id = c.course_id
+ 17  GROUP BY g.learner_id, l.learner_name, g.semester_id;
+
+LEARNER_ID
+----------
+LEARNER_NAME
+--------------------------------------------------------------------------------
+SEMESTER_ID        GPA
+----------- ----------
+         2
+Bob
+          1       3.27
+
+         1
+Alice
+          1       9.45
+
+LEARNER_ID
+----------
+LEARNER_NAME
+--------------------------------------------------------------------------------
+SEMESTER_ID        GPA
+----------- ----------
+
+
+SQL> SELECT 
+  2      l.learner_id,
+  3      l.learner_name,
+  4      COUNT(CASE WHEN g.grade = 'F' THEN 1 END) AS failed_courses,
+  5      CASE 
+  6          WHEN COUNT(CASE WHEN g.grade = 'F' THEN 1 END) > 0 THEN 'FAIL'
+  7          ELSE 'PASS'
+  8      END AS result_status
+  9  FROM Learners l
+ 10  JOIN Grades g ON l.learner_id = g.learner_id
+ 11  GROUP BY l.learner_id, l.learner_name;
+
+LEARNER_ID
+----------
+LEARNER_NAME
+--------------------------------------------------------------------------------
+FAILED_COURSES RESU
+-------------- ----
+         2
+Bob
+             1 FAIL
+
+         1
+Alice
+             0 PASS
+
+LEARNER_ID
+----------
+LEARNER_NAME
+--------------------------------------------------------------------------------
+FAILED_COURSES RESU
+-------------- ----
+
+
+SQL> SELECT *
+  2  FROM (
+  3      SELECT 
+  4          g.learner_id,
+  5          l.learner_name,
+  6          g.semester_id,
+  7          ROUND(SUM(
+  8              CASE g.grade 
+  9                  WHEN 'A' THEN 10
+ 10                  WHEN 'B' THEN 8
+ 11                  WHEN 'C' THEN 6
+ 12                  WHEN 'D' THEN 4
+ 13                  ELSE 0
+ 14              END * c.credits
+ 15          ) / SUM(c.credits), 2) AS GPA,
+ 16          RANK() OVER (PARTITION BY g.semester_id ORDER BY 
+ 17              SUM(
+ 18                  CASE g.grade 
+ 19                      WHEN 'A' THEN 10
+ 20                      WHEN 'B' THEN 8
+ 21                      WHEN 'C' THEN 6
+ 22                      WHEN 'D' THEN 4
+ 23                      ELSE 0
+ 24                  END * c.credits
+ 25              ) / SUM(c.credits) DESC
+ 26          ) AS rank
+ 27      FROM Grades g
+ 28      JOIN Learners l ON g.learner_id = l.learner_id
+ 29      JOIN Courses c ON g.course_id = c.course_id
+ 30      GROUP BY g.learner_id, l.learner_name, g.semester_id
+ 31  );
+
+LEARNER_ID
+----------
+LEARNER_NAME
+--------------------------------------------------------------------------------
+SEMESTER_ID        GPA       RANK
+----------- ---------- ----------
+         1
+Alice
+          1       9.45          1
+
+         2
+Bob
+          1       3.27          2
+
+LEARNER_ID
+----------
+LEARNER_NAME
+--------------------------------------------------------------------------------
+SEMESTER_ID        GPA       RANK
+----------- ---------- ----------
+
+SQL> CREATE TABLE GPA_Summary (
+  2      learner_id NUMBER,
+  3      semester_id NUMBER,
+  4      gpa NUMBER,
+  5      PRIMARY KEY (learner_id, semester_id)
+  6  );
+
+Table created.
+
+SQL> CREATE OR REPLACE TRIGGER trg_update_gpa
+  2  AFTER INSERT OR UPDATE ON Grades
+  3  FOR EACH ROW
+  4  DECLARE
+  5      v_gpa NUMBER;
+  6  BEGIN
+  7      SELECT ROUND(SUM(
+  8          CASE g.grade 
+  9              WHEN 'A' THEN 10
+ 10              WHEN 'B' THEN 8
+ 11              WHEN 'C' THEN 6
+ 12              WHEN 'D' THEN 4
+ 13              ELSE 0
+ 14          END * c.credits
+ 15      ) / SUM(c.credits), 2)
+ 16      INTO v_gpa
+ 17      FROM Grades g
+ 18      JOIN Courses c ON g.course_id = c.course_id
+ 19      WHERE g.learner_id = :NEW.learner_id AND g.semester_id = :NEW.semester_id;
+ 20  
+ 21      MERGE INTO GPA_Summary gs
+ 22      USING dual
+ 23      ON (gs.learner_id = :NEW.learner_id AND gs.semester_id = :NEW.semester_id)
+ 24      WHEN MATCHED THEN
+ 25          UPDATE SET gs.gpa = v_gpa
+ 26      WHEN NOT MATCHED THEN
+ 27          INSERT (learner_id, semester_id, gpa)
+ 28          VALUES (:NEW.learner_id, :NEW.semester_id, v_gpa);
+ 29  END;
+ 30  /
+
+Trigger created.
+
+SQL> SELECT 
+  2      sem.semester_name,
+  3      l.learner_id,
+  4      l.learner_name,
+  5      COUNT(*) AS total_courses,
+  6      COUNT(CASE WHEN g.grade != 'F' THEN 1 END) AS passed,
+  7      COUNT(CASE WHEN g.grade = 'F' THEN 1 END) AS failed
+  8  FROM Grades g
+  9  JOIN Learners l ON g.learner_id = l.learner_id
+ 10  JOIN Semesters sem ON g.semester_id = sem.semester_id
+ 11  GROUP BY sem.semester_name, l.learner_id, l.learner_name
+ 12  ORDER BY sem.semester_name, l.learner_id;
+
+SEMESTER_NAME        LEARNER_ID
+-------------------- ----------
+LEARNER_NAME
+--------------------------------------------------------------------------------
+TOTAL_COURSES     PASSED     FAILED
+------------- ---------- ----------
+Sem1                          1
+Alice
+            3          3          0
+
+Sem1                          2
+Bob
+            3          2          1
+
+SEMESTER_NAME        LEARNER_ID
+-------------------- ----------
+LEARNER_NAME
+--------------------------------------------------------------------------------
+TOTAL_COURSES     PASSED     FAILED
+------------- ---------- ----------
+
+
+SQL> 
